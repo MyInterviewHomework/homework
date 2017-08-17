@@ -1,0 +1,9 @@
+**/*.o
+**/*.a
+**/*.bin
+**/*.elf
+**/*.hex
+**/*.info_code
+**/*.info_elf
+**/*.info_size
+**/*.info_symbol
