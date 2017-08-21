@@ -1,5 +1,9 @@
+/* See http://www.downloads.seng.de/HowTo_ToolChain_STM32_Ubuntu.pdf */
+
 #include "stm32f10x.h"
+
 typedef void( *const intfunc )( void );
+
 #define WEAK __attribute__ ((weak))
 /* provided by the linker script */
 //extern unsigned long _etext; /* start address of the static initialization data */

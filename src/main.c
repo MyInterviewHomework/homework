@@ -1,9 +1,7 @@
 /************************************************************************************************************
 * Test-program for Olimex “STM32-H103”, header board for “STM32F103RBT6”.
-* After program start green LED (STAT) will blink, when jumper LED_E is closed.
+* After program start, green LED (STAT) will blink based on the hardware timer TIM2 interruption.
 *
-* Running Release code will set ReadOutProtection (see down) via function FLASH_ReadOutProtection_Enable().
-* Do not run Release code until you know how to set back ReadOutProtection!
 ************************************************************************************************************/
 
 #include "stm32f10x.h"
@@ -12,6 +10,10 @@
 #include "stm32f10x_tim.h"
 #include "misc.h"
 
+/*
+	The board status LED is connected to the GPIOC Pin 12.
+	Enable the port in push pull output mode.
+*/
 void InitializeLEDs()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
@@ -26,6 +28,11 @@ void InitializeLEDs()
     GPIO_WriteBit(GPIOC, GPIO_Pin_12, Bit_RESET);
 }
 
+/*
+	Initialize the timer (TIM2) to generate an
+	update event each second.
+	Period value = (1 / 72Mhz) * 40000 * 1800
+*/
 void InitializeTimer()
 {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
@@ -33,7 +40,7 @@ void InitializeTimer()
     TIM_TimeBaseInitTypeDef timerInitStructure;
     timerInitStructure.TIM_Prescaler = 40000;
     timerInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    timerInitStructure.TIM_Period = 2000;
+    timerInitStructure.TIM_Period = 1800;
     timerInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
     timerInitStructure.TIM_RepetitionCounter = 0;
     TIM_TimeBaseInit(TIM2, &timerInitStructure);
@@ -41,6 +48,9 @@ void InitializeTimer()
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 }
 
+/*
+	Enable timer interrupt for TIM2 
+*/
 void EnableTimerInterrupt()
 {
     NVIC_InitTypeDef nvicStructure;
@@ -51,6 +61,12 @@ void EnableTimerInterrupt()
     NVIC_Init(&nvicStructure);
 }
 
+/*
+	Timer interrupt handler.
+	Just: 
+	- clear interrupt pending bits
+	- toggle the led status by XOR on bit 12
+*/
 void TIM2_IRQHandler(void)
 {
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
@@ -60,6 +76,9 @@ void TIM2_IRQHandler(void)
     }
 }
 
+/*
+	Main: where the application starts
+*/
 int main()
 {
     InitializeLEDs();
@@ -71,6 +90,7 @@ int main()
     {
 		for (int i = 0; i < 1000000; i++)
 		{
+			/* Create a opportunity to put a breakpoint */
 			timerValue = TIM_GetCounter(TIM2);
 			if (timerValue == 200)
 				asm("nop");
