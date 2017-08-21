@@ -1,6 +1,6 @@
 ![Krono-Safe](http://krono-safe.com/wp-content/uploads/2014/08/Logo2.png)
 # Homework
-This homework consists in using and creating an extension to gdb in order to debug specific application values on a target.
+This homework consists in using and creating an extension to gdb in order to debug an applicatin running on a board.
 It contains:
 - an application that blinks the status led based on hardware timer
 - a set of gdb and Python scripts for gdb
