@@ -8,8 +8,8 @@ end
 
 # Breakpoints
 define set_breakpoints
-	break main.c:58
-	break main.c:76
+	break main.c:75
+	break main.c:95
 	info break
 end
 
