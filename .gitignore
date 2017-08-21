@@ -7,3 +7,4 @@
 **/*.info_elf
 **/*.info_size
 **/*.info_symbol
+**/*.pyc
