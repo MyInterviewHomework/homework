@@ -1,11 +1,21 @@
-# general Makefile
+# General Makefile
+# Inspired by http://www.downloads.seng.de/HowTo_ToolChain_STM32_Ubuntu.pdf
+#
+# Usage:
+# make OptLIB=0 OptSRC=0 all tshow
+#
+# See Makefile.common for parameters details
+
 include Makefile.common
 LDFLAGS=$(COMMONFLAGS) -fno-exceptions -ffunction-sections -fdata-sections -L$(LIBDIRWIN) -nostartfiles -Wl,--gc-sections,-Tlinker.ld
 
 LDLIBS+=-lm
 LDLIBS+=-lstm32
-STARTUP=startup.c
 
+# Compile stm32 libs and src
+# Produce:
+# - a binary file ready to load to the board
+# - an elf file with all symbols and code for debugging purposes
 all: libs src
 	$(CC) -o $(PROGRAM).elf $(LDFLAGS) \
 		-Wl,--whole-archive \
